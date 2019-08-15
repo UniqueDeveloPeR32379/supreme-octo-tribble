@@ -2,14 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Access Denied</title>
+<title>ACCESS DENIED</title>
+<link href="css/admin_styles.css" rel="stylesheet" type="text/css" />
 </head>
-<body background="images/back3.jpg">  
-<center><b><font color = "black" size="6"> </b></center><br><br>
+<body background="images/img2.jpg">
+<center><b><font color = "black" size="6"> </font></b></center><br><br>
 <body>
 <div id="page">
 <div id="header">
-<h1>Invalid Details Provided </h1>
+<h1><font color="red">Invalid username or password provided </h1>
 <p align="center">&nbsp;</p>
 </div>
 <div id="container">
@@ -19,80 +20,44 @@ error_reporting(E_ALL);
 
 ob_start();
 session_start();
+require('../connection.php');
 
-require('connection.php');
+$tbl_name="tbAdministrators";
 
 
-// Defining your login details
+// Defining your login details into variables
 $myusername=$_POST['myusername'];
 $mypassword=$_POST['mypassword'];
-$_SESSION['uname']=$myusername;
-
-$encrypted_mypassword=md5($mypassword);
+$encrypted_mypassword=md5($mypassword); 
 // MySQL injection protections
 $myusername = stripslashes($myusername);
 $mypassword = stripslashes($mypassword);
 $myusername = mysql_real_escape_string($myusername);
 $mypassword = mysql_real_escape_string($mypassword);
-
-
-
-
-
-
-
-$sql1="SELECT check1 FROM tbmembers WHERE email='$myusername' and password='$encrypted_mypassword'";
-$res=mysql_query($sql1) or die(mysql_error());
-while($row=mysql_fetch_assoc($res))
-{
-	$xyz=$row['check1'];
-}
-if($xyz!=1){
-
-
-
-
-
-
-
-$sql="SELECT * FROM tbmembers WHERE email='$myusername' and password='$encrypted_mypassword'" or die(mysql_error());
+$sql="SELECT * FROM $tbl_name WHERE email='$myusername' and password='$encrypted_mypassword'" or die(mysql_error());
 $result=mysql_query($sql) or die(mysql_error());
 
+// Checking table row
 $count=mysql_num_rows($result);
-
+// If username and password is a match, the count will be 1
 
 if($count==1){
+// If everything checks out, you will now be forwarded to admin.php
 $user = mysql_fetch_assoc($result);
-$_SESSION['member_id'] = $user['member_id'];
-header("location:student.php");
+ $_SESSION['admin_id'] = $user['admin_id'];
+header("location:admin.php");
 }
-
-
-
+//If the username or password is wrong, you will receive this message below.
 else {
-echo "Wrong Username or Password<br><br>Return to <a href=\"index.php\">login</a>";
+echo "Wrong Username or Password<br><br>Return to <a href=\"login.html\">login</a>";
 }
-}
-
-
-
-
-else{
-
-echo"<script type='text/javascript'>alert('you have done with your voting');</script>";
-echo"<script type='text/javascript'>location.href='index.php';</script>";
-
-}
-
-
-
-
 
 ob_end_flush();
 
 ?> 
 </div>
 <div id="footer"> 
+  <div class="bottom_addr">&copy; 2012 Simple PHP Polling System. All Rights Reserved</div>
 </div>
 </div>
 </body>
